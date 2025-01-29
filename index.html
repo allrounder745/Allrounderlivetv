@@ -3,10 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Allrounder Live TV</title>
+    <title>Play M3U8 Video</title>
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap" rel="stylesheet">
     <style>
+        /* Your original styling code here */
         body {
             background: linear-gradient(to bottom right, #003366, #000000);
             color: #fff;
@@ -21,68 +22,46 @@
             flex-direction: column;
             overflow-x: hidden;
         }
+
         h1 {
             font-size: 3rem;
             color: #ffcc00;
             margin-bottom: 15px;
             font-weight: bold;
             text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.6);
+            transition: color 0.3s ease-in-out;
         }
+
+        h1:hover {
+            color: #ffd700;
+        }
+
         .video-container {
             width: 100%;
             max-width: 90vw;
+            height: auto;
             background-color: #1e1e1e;
             overflow: hidden;
             border-radius: 15px;
             box-shadow: 0 8px 24px rgba(0, 0, 0, 0.8);
             margin-bottom: 30px;
-            position: relative;
+            transition: box-shadow 0.3s ease;
         }
+
+        .video-container:hover {
+            box-shadow: 0 12px 30px rgba(255, 215, 0, 0.4);
+        }
+
         video {
             width: 100%;
+            height: auto;
             background-color: #000;
             border-radius: 12px;
             outline: none;
         }
-        .quality-bar {
-            background-color: rgba(0, 0, 0, 0.8);
-            color: #ffd700;
-            font-size: 1.2rem;
-            padding: 15px;
-            cursor: pointer;
-            text-align: center;
-            border-radius: 20px;
-            width: 80%;
-            margin: 20px auto;
-        }
-        .quality-menu {
-            display: none;
-            background-color: #1e1e1e;
-            border-radius: 15px;
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.8);
-            padding: 10px;
-            width: 100%;
-            margin-top: 10px;
-            text-align: left;
-            z-index: 100;
-        }
-        .quality-menu button {
-            background-color: transparent;
-            color: #fff;
-            border: none;
-            padding: 10px;
-            font-size: 1.1rem;
-            width: 100%;
-            cursor: pointer;
-            border-radius: 8px;
-            transition: background-color 0.3s ease;
-        }
-        .quality-menu button:hover {
-            background-color: #ffd700;
-            color: #222;
-        }
+
         .modal {
-            display: flex;
+            display: none;
             position: fixed;
             z-index: 1;
             left: 0;
@@ -92,7 +71,9 @@
             background-color: rgba(0, 0, 0, 0.9);
             justify-content: center;
             align-items: center;
+            transition: opacity 0.3s ease;
         }
+
         .modal-content {
             background-color: #000;
             color: #fff;
@@ -102,11 +83,15 @@
             width: 80%;
             max-width: 450px;
             box-shadow: 0 6px 18px rgba(0, 0, 0, 0.7);
+            transition: transform 0.3s ease-in-out;
         }
+
         .modal-content h2 {
             font-size: 2rem;
+            margin-bottom: 10px;
             color: #ffd700;
         }
+
         .close-btn, .join-btn {
             padding: 12px 24px;
             border: none;
@@ -115,20 +100,25 @@
             border-radius: 8px;
             cursor: pointer;
         }
+
         .close-btn {
             background-color: #ff4d4d;
             color: #fff;
         }
+
         .close-btn:hover {
             background-color: #ff2a2a;
         }
+
         .join-btn {
             background-color: #ffd700;
             color: #222;
         }
+
         .join-btn:hover {
             background-color: #e6c200;
         }
+
         .advertisement-box {
             width: 100%;
             max-width: 90vw;
@@ -141,8 +131,8 @@
             border-radius: 10px;
             box-shadow: 0 6px 15px rgba(0, 0, 0, 0.8);
             overflow: hidden;
-            cursor: pointer;
         }
+
         .advertisement-content {
             color: #ffd700;
             font-weight: bold;
@@ -150,10 +140,16 @@
             white-space: nowrap;
             animation: scroll-left 15s linear infinite;
         }
+
         @keyframes scroll-left {
-            0% { transform: translateX(100%); }
-            100% { transform: translateX(-100%); }
+            0% {
+                transform: translateX(100%);
+            }
+            100% {
+                transform: translateX(-100%);
+            }
         }
+
     </style>
 </head>
 <body>
@@ -164,92 +160,61 @@
         <video id="video" controls></video>
     </div>
 
-    <div class="quality-bar" onclick="toggleQualityMenu()">⚙️ Video Quality</div>
-    <div class="quality-menu" id="qualityMenu">
-        <button onclick="setQuality('1080p')">1080p</button>
-        <button onclick="setQuality('720p')">720p</button>
-        <button onclick="setQuality('480p')">480p</button>
-        <button onclick="setQuality('360p')">360p</button>
-    </div>
-
+    <!-- Modal for Telegram Channel Join -->
     <div id="joinModal" class="modal">
         <div class="modal-content">
             <h2>Join Our Telegram Channel!</h2>
             <p>Stay updated with the latest news and content by joining our official Telegram channel.</p>
-            <button class="join-btn" onclick="joinTelegram()">Join Now</button>
+            <button class="join-btn" onclick="window.location.href='https://t.me/your_channel_link'">Join Now</button>
             <button class="close-btn" onclick="closeModal()">Close</button>
         </div>
     </div>
 
-    <div class="advertisement-box" onclick="redirectToTelegram()">
+    <!-- Telegram Advertisement Box with scrolling text -->
+    <div class="advertisement-box">
         <div class="advertisement-content">
             <p>📱 Join Our Telegram Channel for Latest Updates! 📱</p>
         </div>
     </div>
 
     <script>
-        // Show the popup on page load
+        // Display the modal immediately on page load
         window.onload = function() {
             document.getElementById('joinModal').style.display = 'flex';
         }
 
+        // Close the modal
         function closeModal() {
             document.getElementById('joinModal').style.display = 'none';
         }
 
-        const telegramChannel = "https://t.me/+DdU50i9b_E9jMDc1";
+        // Get the URL from the query string
+        const urlParams = new URLSearchParams(window.location.search);
+        const m3u8Url = urlParams.get('url'); // The M3U8 URL
 
-        function joinTelegram() {
-            document.querySelector(".advertisement-content").innerHTML = `<p>📱 Join Our Exclusive Channel: <strong>@AllrounderLive</strong> 📱</p>`;
-            window.location.href = telegramChannel;
-        }
-
-        function redirectToTelegram() {
-            window.location.href = telegramChannel;
-        }
-
-        function toggleQualityMenu() {
-            const qualityMenu = document.getElementById('qualityMenu');
-            qualityMenu.style.display = (qualityMenu.style.display === 'block') ? 'none' : 'block';
-        }
-
-        function setQuality(quality) {
-            let m3u8Url = '';
-
-            // Assign different M3U8 URLs based on the selected quality.
-            if (quality === '1080p') {
-                m3u8Url = 'https://example.com/1080p.m3u8';  // Placeholder link for 1080p
-            } else if (quality === '720p') {
-                m3u8Url = 'https://example.com/720p.m3u8';  // Placeholder link for 720p
-            } else if (quality === '480p') {
-                m3u8Url = 'https://example.com/480p.m3u8';  // Placeholder link for 480p
-            } else if (quality === '360p') {
-                m3u8Url = 'https://example.com/360p.m3u8';  // Placeholder link for 360p
-            }
-
+        if (m3u8Url) {
             const video = document.getElementById('video');
-            
+
+            // If HLS.js is supported by the browser
             if (Hls.isSupported()) {
-                const hls = new Hls({
-                    xhrSetup: function (xhr) {
-                        xhr.withCredentials = true;
-                    }
-                });
-                hls.loadSource(m3u8Url);
+                const hls = new Hls();
+                hls.loadSource(m3u8Url); // Load the M3U8 URL
                 hls.attachMedia(video);
                 hls.on(Hls.Events.MANIFEST_PARSED, function () {
                     video.play();
                 });
-            } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+            }
+            // If browser supports native HLS
+            else if (video.canPlayType('application/vnd.apple.mpegurl')) {
                 video.src = m3u8Url;
                 video.addEventListener('loadedmetadata', function () {
                     video.play();
                 });
             } else {
-                alert("Your browser does not support M3U8 playback.");
+                alert('Your browser does not support HLS playback.');
             }
-            
-            document.getElementById('qualityMenu').style.display = 'none';
+        } else {
+            alert("No video URL provided.");
         }
     </script>
 
